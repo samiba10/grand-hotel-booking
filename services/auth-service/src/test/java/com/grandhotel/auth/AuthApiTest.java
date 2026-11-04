@@ -47,6 +47,7 @@ class AuthApiTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.token", notNullValue()))
         .andExpect(jsonPath("$.user.guestId").value(1))
+        .andExpect(jsonPath("$.user.region").value("IL"))
         .andExpect(jsonPath("$.user.permissions", hasItem("booking:read:own")))
         .andExpect(jsonPath("$.user.permissions", not(hasItem("audit:read"))));
   }

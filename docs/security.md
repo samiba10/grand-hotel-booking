@@ -38,6 +38,7 @@ profile, `any` = all. Defined once in `common-defaults.yml`; code never checks r
 | `guest:read` | `:own` | `:any` | `:any` |
 | `audit:read` | | | ✅ |
 | `fx:read` | | | ✅ |
+| `settings:write` | | | ✅ |
 
 Adding e.g. a `MANAGER` role = one block of YAML. No code change.
 

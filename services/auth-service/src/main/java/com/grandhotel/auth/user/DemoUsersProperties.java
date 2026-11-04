@@ -18,7 +18,13 @@ public record DemoUsersProperties(List<DemoUser> users) {
 
   /**
    * @param guestId the guest profile (booking-service) this account owns; null for staff
+   * @param region ISO-3166 country code, e.g. IL - drives the default display currency
    */
   public record DemoUser(
-      String username, String password, String displayName, Set<Role> roles, Long guestId) {}
+      String username,
+      String password,
+      String displayName,
+      Set<Role> roles,
+      Long guestId,
+      String region) {}
 }

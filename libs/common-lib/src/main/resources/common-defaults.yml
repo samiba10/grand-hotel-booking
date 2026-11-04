@@ -37,6 +37,7 @@ app:
         - guest:read:any
         - audit:read
         - fx:read
+        - settings:write
 
 spring:
   # H2 in-memory by default (zero setup, tests). DB_URL switches to PostgreSQL (docker compose).

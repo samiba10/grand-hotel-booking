@@ -18,16 +18,20 @@ app:
         display-name: Dana Levi
         roles: [GUEST]
         guest-id: 1
+        region: IL
       - username: guest2
         password: ${DEMO_GUEST_PASSWORD:Guest123!}
         display-name: John Smith
         roles: [GUEST]
         guest-id: 2
+        region: US
       - username: staff
         password: ${DEMO_STAFF_PASSWORD:Staff123!}
         display-name: Front Desk
         roles: [STAFF]
+        region: IL
       - username: admin
         password: ${DEMO_ADMIN_PASSWORD:Admin123!}
         display-name: Hotel Admin
         roles: [ADMIN]
+        region: IL

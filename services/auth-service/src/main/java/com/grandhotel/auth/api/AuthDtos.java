@@ -18,7 +18,8 @@ public final class AuthDtos {
       String displayName,
       Set<Role> roles,
       Set<String> permissions,
-      Long guestId) {}
+      Long guestId,
+      String region) {}
 
   public record LoginResponse(String token, Instant expiresAt, UserProfile user) {}
 }
