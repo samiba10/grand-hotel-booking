@@ -51,3 +51,19 @@ flowchart LR
   C -->|no| E[503 - never an invented rate]
   P -. down .-> E2[booking: 503 Pricing temporarily unavailable]
 ```
+
+## Currency selection (USD / ILS)
+
+| Who decides | Priority | Where |
+|---|---|---|
+| The user's explicit choice (header dropdown) | 1 | stored per browser, sent as `currency` |
+| The user's region -> currency (admin mapping, e.g. `IL=ILS`) | 2 | region from `/api/auth/me`, else browser locale |
+| The system default currency (admin) | 3 | `GET /api/settings` |
+
+- **System settings** (`/api/settings`, ADMIN): which currencies are offered, the default, and
+  region -> currency. Changed at runtime, audited (`SETTINGS_UPDATED`, before -> after).
+- The admin can only offer currencies the pricing chain can quote
+  (`app.booking.priceable-currencies`), so the UI can never offer a currency that would fail.
+- **The server is the source of truth**: a currency that is not offered gets 400, whatever the UI
+  sends.
+- ILS quotes need no conversion (identity rate); USD quotes use the live FX rate.

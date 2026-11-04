@@ -26,7 +26,8 @@ public class UserDirectory {
                         encoder.encode(u.password()),
                         u.displayName(),
                         u.roles(),
-                        u.guestId()))
+                        u.guestId(),
+                        u.region()))
             .collect(Collectors.toUnmodifiableMap(u -> key(u.username()), Function.identity()));
   }
 
@@ -39,5 +40,10 @@ public class UserDirectory {
   }
 
   public record UserRecord(
-      String username, String passwordHash, String displayName, Set<Role> roles, Long guestId) {}
+      String username,
+      String passwordHash,
+      String displayName,
+      Set<Role> roles,
+      Long guestId,
+      String region) {}
 }

@@ -1,6 +1,5 @@
 package com.grandhotel.booking.booking;
 
-import com.grandhotel.booking.BookingProperties;
 import com.grandhotel.booking.audit.AuditService;
 import com.grandhotel.booking.booking.BookingDtos.BookingResponse;
 import com.grandhotel.booking.booking.BookingDtos.CreateBookingRequest;
@@ -12,6 +11,7 @@ import com.grandhotel.booking.pricing.PricingQuote;
 import com.grandhotel.booking.room.AvailabilityService;
 import com.grandhotel.booking.room.Room;
 import com.grandhotel.booking.room.RoomRepository;
+import com.grandhotel.booking.settings.SettingsService;
 import com.grandhotel.common.authz.AccessGuard;
 import com.grandhotel.common.authz.Permissions;
 import com.grandhotel.common.exception.BadRequestException;
@@ -41,7 +41,7 @@ public class BookingService {
   private final AvailabilityService availability;
   private final AccessGuard guard;
   private final AuditService audit;
-  private final BookingProperties props;
+  private final SettingsService settings;
   private final Clock clock;
 
   public BookingService(
@@ -52,7 +52,7 @@ public class BookingService {
       AvailabilityService availability,
       AccessGuard guard,
       AuditService audit,
-      BookingProperties props,
+      SettingsService settings,
       Clock clock) {
     this.bookings = bookings;
     this.rooms = rooms;
@@ -61,7 +61,7 @@ public class BookingService {
     this.availability = availability;
     this.guard = guard;
     this.audit = audit;
-    this.props = props;
+    this.settings = settings;
     this.clock = clock;
   }
 
@@ -75,8 +75,9 @@ public class BookingService {
     guard.require(user, Permissions.BOOKING_CREATE, guestId);
     Guest guest = guests.findById(guestId).orElseThrow(() -> new NotFoundException("Guest", guestId));
 
+    String currency = settings.resolveCurrency(req.currency());
     Room room = bookableRoom(req.roomId());
-    PricingQuote quote = quote(room, dates); // remote call BEFORE taking the lock
+    PricingQuote quote = quote(room, dates, currency); // remote call BEFORE taking the lock
     Money total = quote.totalFor(room.getRoomType());
 
     lockAndRequireFree(room, dates, NEW_BOOKING);
@@ -111,7 +112,8 @@ public class BookingService {
             + booking.getCheckOut() + " total=" + booking.getTotal().format();
 
     Room room = bookableRoom(req.roomId());
-    PricingQuote quote = quote(room, dates);
+    // A booking keeps the currency it was made in; changes are re-priced in that currency.
+    PricingQuote quote = quote(room, dates, booking.getTotal().currency());
     Money total = quote.totalFor(room.getRoomType());
 
     lockAndRequireFree(room, dates, booking.getId());
@@ -173,8 +175,8 @@ public class BookingService {
     }
   }
 
-  private PricingQuote quote(Room room, StayDates dates) {
+  private PricingQuote quote(Room room, StayDates dates, String currency) {
     return pricing.quote(
-        dates, availability.occupancyPercent(dates), Set.of(room.getRoomType()), props.currency());
+        dates, availability.occupancyPercent(dates), Set.of(room.getRoomType()), currency);
   }
 }

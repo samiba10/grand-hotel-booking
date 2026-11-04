@@ -8,7 +8,9 @@ spring:
 app:
   booking:
     hotel-id: 1
-    currency: USD          # charged currency (assignment: USD pricing)
+    # What pricing-service + fx-service can quote. Which of these are OFFERED, the default, and
+    # region -> currency are runtime system settings (ADMIN, /api/settings).
+    priceable-currencies: [USD, ILS]
   clients:
     pricing:
       url: ${PRICING_URL:http://localhost:8083}

@@ -28,7 +28,7 @@ class ConcurrentBookingTest extends ApiTestSupport {
   void parallelRequestsForTheSameRoomProduceExactlyOneBooking() throws Exception {
     var staff = permissions.toUser(new VerifiedToken("staff", Set.of(Role.STAFF), null));
     LocalDate in = LocalDate.now().plusDays(250);
-    var request = new CreateBookingRequest(11L, in, in.plusDays(2), 1L); // room 301
+    var request = new CreateBookingRequest(11L, in, in.plusDays(2), 1L, null); // room 301
 
     int threads = 8;
     ExecutorService pool = Executors.newFixedThreadPool(threads);
