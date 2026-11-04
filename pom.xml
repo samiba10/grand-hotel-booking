@@ -19,6 +19,7 @@
   <name>Grand Hotel Booking Platform</name>
 
   <modules>
+    <module>libs/common-lib</module>
   </modules>
 
   <properties>

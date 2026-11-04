@@ -1,0 +1,3 @@
+com.grandhotel.common.autoconfigure.CommonCoreAutoConfiguration
+com.grandhotel.common.autoconfigure.CommonServletAutoConfiguration
+com.grandhotel.common.autoconfigure.CommonOpenApiAutoConfiguration
