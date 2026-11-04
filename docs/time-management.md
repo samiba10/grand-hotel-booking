@@ -10,6 +10,19 @@ The assignment's time-management section, filled in with how the work was actual
 | 4 - Frontend core | React app | SDK, RBAC layer, `/search`, `/booking/:id`, `/guest/:id`, EN/HE RTL, validation, loading states |
 | 5 - Polish | quality + delivery | full Docker run, k6 benchmarks, coverage, docs, demo |
 
+## Found by integration, fixed in their own PRs
+
+Bugs that unit tests could not catch - each found by running the real stack, fixed in a separate
+PR with the cause in the commit message:
+
+| Found by | Bug | Fix |
+|---|---|---|
+| first `mvn verify` | our filter bean name clashed with Spring MVC's `requestContextFilter` | renamed to `AuditContextFilter` |
+| Hibernate `validate` | `CHAR(3)` columns vs `String` -> `VARCHAR` | currency columns `VARCHAR(3)` |
+| first `docker compose up` | `RandomGenerator.getDefault()` needs `jdk.random`, absent from the slim JRE | `SplittableRandom` (java.base) |
+| smoke test | gateway and service both set `X-Transaction-Id`/`X-Session-Id`; `fetch` joins duplicates -> session ping-pong broke | `DedupeResponseHeader` at the gateway |
+| first `make perf` | k6 started before the recreated gateway was healthy | `docker compose up --wait` |
+
 ## Trade-offs made for the time box
 
 | Not done | Why it is OK here | Next step |
