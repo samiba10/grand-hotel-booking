@@ -10,6 +10,11 @@ map $http_x_real_ip $client_ip {
 server {
     listen 8080;
     server_tokens off;
+
+    # Re-resolve the gateway every 10 s instead of once at startup: on Railway every deploy gets a
+    # new private IP, so a cached address breaks the frontend after a gateway redeploy.
+    # NGINX_LOCAL_RESOLVERS is filled from /etc/resolv.conf by the image entrypoint.
+    resolver ${NGINX_LOCAL_RESOLVERS} valid=10s;
     root /usr/share/nginx/html;
     index index.html;
 
@@ -20,7 +25,8 @@ server {
 
     # Same-origin API -> gateway: no CORS needed.
     location /api/ {
-        proxy_pass ${API_UPSTREAM};
+        set $gateway ${API_UPSTREAM};   # a variable makes nginx resolve at request time
+        proxy_pass $gateway;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-For $client_ip;
         client_max_body_size 1m;
@@ -28,7 +34,8 @@ server {
 
     # Gateway health (no details) - used by the post-deploy smoke test.
     location = /actuator/health {
-        proxy_pass ${API_UPSTREAM};
+        set $gateway ${API_UPSTREAM};
+        proxy_pass $gateway;
     }
 
     # Hashed assets can be cached forever; index.html never.

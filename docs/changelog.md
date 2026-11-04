@@ -26,3 +26,4 @@ Documentation is updated in the same commit as the code it describes.
 | 20 | Frontend coverage in testing.md; mobile screenshot | testing, README |
 | 22 | Demo video (README player + docs page), docs site on GitHub Pages | README, demo |
 | 23 | Live demo link; first-deploy lessons (Railway) | README, deployment |
+| 24 | nginx resolves the gateway per request; frontend deploys after the backend | deployment |

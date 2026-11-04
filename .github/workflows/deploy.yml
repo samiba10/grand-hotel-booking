@@ -25,7 +25,7 @@ jobs:
       fail-fast: true
       max-parallel: 3
       matrix:
-        service: [fx-service, pricing-service, booking-service, auth-service, gateway-service, frontend]
+        service: [fx-service, pricing-service, booking-service, auth-service, gateway-service]
     env:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
     steps:
@@ -33,15 +33,24 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
       - name: Deploy ${{ matrix.service }}
-        run: |
-          if [ "${{ matrix.service }}" = "frontend" ]; then
-            railway up frontend --path-as-root --ci --service frontend
-          else
-            railway up --ci --service "${{ matrix.service }}"
-          fi
+        run: railway up --ci --service "${{ matrix.service }}"
+
+  # The edge goes last, after every backend service it proxies to.
+  deploy-frontend:
+    needs: deploy
+    runs-on: ubuntu-latest
+    container: ghcr.io/railwayapp/cli:latest
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - name: Deploy frontend
+        run: railway up frontend --path-as-root --ci --service frontend
 
   smoke:
-    needs: deploy
+    needs: deploy-frontend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
