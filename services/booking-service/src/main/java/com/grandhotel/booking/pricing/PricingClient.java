@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import java.net.http.HttpClient;
+import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
@@ -30,8 +31,10 @@ public class PricingClient {
       @Value("${app.clients.pricing.url}") String baseUrl,
       @Value("${app.clients.pricing.timeout:PT3S}") Duration timeout,
       ContextPropagatingInterceptor propagation) {
-    var factory = new SimpleClientHttpRequestFactory();
-    factory.setConnectTimeout(timeout);
+    // java.net.http client (not legacy HttpURLConnection): on Railway, HttpURLConnection failed
+    // inside getResponseCode() with StringIndexOutOfBoundsException while parsing a response.
+    var factory =
+        new JdkClientHttpRequestFactory(HttpClient.newBuilder().connectTimeout(timeout).build());
     factory.setReadTimeout(timeout);
     this.http =
         RestClient.builder()

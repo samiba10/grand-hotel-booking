@@ -9,7 +9,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import java.net.http.HttpClient;
+import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
@@ -31,8 +32,10 @@ public class FxClient {
       @Value("${app.clients.fx.url}") String baseUrl,
       @Value("${app.clients.fx.timeout:PT2S}") Duration timeout,
       ContextPropagatingInterceptor propagation) {
-    var factory = new SimpleClientHttpRequestFactory();
-    factory.setConnectTimeout(timeout);
+    // java.net.http client (not legacy HttpURLConnection): on Railway, HttpURLConnection failed
+    // inside getResponseCode() with StringIndexOutOfBoundsException while parsing a response.
+    var factory =
+        new JdkClientHttpRequestFactory(HttpClient.newBuilder().connectTimeout(timeout).build());
     factory.setReadTimeout(timeout);
     this.http =
         RestClient.builder()
