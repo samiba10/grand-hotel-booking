@@ -26,6 +26,7 @@
     <module>services/pricing-service</module>
     <module>services/booking-service</module>
     <module>services/gateway-service</module>
+    <module>coverage-report</module>
   </modules>
 
   <properties>
