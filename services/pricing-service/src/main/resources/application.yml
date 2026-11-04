@@ -1,0 +1,36 @@
+server:
+  port: ${SERVER_PORT:8083}
+
+spring:
+  application:
+    name: pricing-service
+
+app:
+  clients:
+    fx:
+      url: ${FX_URL:http://localhost:8084}
+      timeout: PT2S
+  # Assignment baseline: "$100/night". The hotel prices in ILS; 370.00 ILS is ~ $100 at the seeded
+  # rate, and the live FX rate decides the actual USD amount. Integers only.
+  pricing:
+    base-currency: ILS
+    base-prices:
+      STANDARD: 37000   # 370.00 ILS
+      DELUXE: 55500     # 555.00 ILS
+      SUITE: 92500      # 925.00 ILS
+    seasons:
+      - name: summer
+        from: "07-01"
+        to: "08-31"
+        multiplier-basis-points: 13000   # +30%
+      - name: holidays
+        from: "12-20"
+        to: "01-05"
+        multiplier-basis-points: 12500   # +25%
+    occupancy-tiers:
+      - min-percent: 0
+        multiplier-basis-points: 10000
+      - min-percent: 50
+        multiplier-basis-points: 11000   # +10%
+      - min-percent: 80
+        multiplier-basis-points: 12500   # +25%
