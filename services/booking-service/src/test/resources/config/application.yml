@@ -1,0 +1,4 @@
+app:
+  clients:
+    pricing:
+      url: http://localhost:1   # PricingClient is mocked in tests
