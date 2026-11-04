@@ -1,0 +1,77 @@
+# Shared defaults for EVERY service (lowest priority - any service or env var can override).
+
+app:
+  jwt:
+    # DEV ONLY default. Real environments inject JWT_SECRET (>= 32 bytes) from a secret manager.
+    secret: ${JWT_SECRET:dev-only-secret-change-me-0123456789-abcdefghij}
+    expiration: ${JWT_EXPIRATION:PT2H}
+    issuer: grand-hotel
+
+  # AuthZ: the ONLY place that says what each role may do. Code checks permissions, not roles.
+  # Scope suffix: ":own" = resources of the caller's guest profile, ":any" = all resources.
+  authz:
+    role-permissions:
+      GUEST:
+        - room:read
+        - pricing:quote
+        - booking:create:own
+        - booking:read:own
+        - booking:update:own
+        - booking:cancel:own
+        - guest:read:own
+      STAFF:
+        - room:read
+        - pricing:quote
+        - booking:create:any
+        - booking:read:any
+        - booking:update:any
+        - booking:cancel:any
+        - guest:read:any
+      ADMIN:
+        - room:read
+        - pricing:quote
+        - booking:create:any
+        - booking:read:any
+        - booking:update:any
+        - booking:cancel:any
+        - guest:read:any
+        - audit:read
+        - fx:read
+
+spring:
+  # H2 in-memory by default (zero setup, tests). DB_URL switches to PostgreSQL (docker compose).
+  datasource:
+    url: ${DB_URL:jdbc:h2:mem:${spring.application.name};DB_CLOSE_DELAY=-1}
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate   # Flyway owns the schema
+  jackson:
+    default-property-inclusion: non_null
+
+server:
+  shutdown: graceful
+  error:
+    include-stacktrace: never
+    include-message: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+# Every log line carries the audit context (see RequestContext).
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:-}] [tx=%X{txId:-} type=%X{txType:-} sid=%X{sessionId:-} user=%X{user:-}]"
