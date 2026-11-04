@@ -42,6 +42,19 @@ gh variable set PUBLIC_URL --body https://<frontend domain>
 gh workflow run deploy.yml           # first deploy (later: automatic after CI on main)
 ```
 
+## Lessons from the first deploy
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| `dockerfile invalid: --mount ... missing an id` | Railway's builder requires service-specific cache-mount ids | removed cache mounts; the go-offline layer caches dependencies |
+| `jdbc:postgresql://:/` | variables set before the databases were renamed; references resolve by service name | rerun the idempotent `railway-setup.sh`, redeploy |
+| nginx `no host in upstream ":8080"` | frontend deployed before the gateway reference resolved | redeploy every service holding a reference after variable changes |
+| 500 from pricing: `StringIndexOutOfBoundsException` in `HttpURLConnection.getResponseCode()` | legacy JDK HTTP client failing on the private network | `java.net.http.HttpClient` (`JdkClientHttpRequestFactory`) for service-to-service calls |
+| gateway not reachable privately | Netty binds IPv4 only | `SERVER_ADDRESS=::` |
+
+Each was caught by the post-deploy smoke test; the 500 was traced with one transaction id across
+gateway -> booking -> pricing logs.
+
 ## Rollback
 
 Railway keeps previous deployments per service: Deployments -> pick one -> Redeploy. Or revert
