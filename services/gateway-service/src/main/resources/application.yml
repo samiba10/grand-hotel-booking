@@ -23,7 +23,7 @@ spring:
             - name: RequestSize
               args:
                 maxSize: 1MB
-            - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+            - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials X-Transaction-Id X-Session-Id, RETAIN_UNIQUE
           globalcors:
             cors-configurations:
               '[/**]':
