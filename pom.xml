@@ -22,6 +22,7 @@
     <module>libs/common-lib</module>
     <module>services/service-parent</module>
     <module>services/auth-service</module>
+    <module>services/fx-service</module>
   </modules>
 
   <properties>
