@@ -1,0 +1,51 @@
+name: Deploy
+
+# Continuous deployment: every green CI run on main ships to Railway, then a smoke test runs
+# against the public URL. Manual trigger for redeploys.
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    container: ghcr.io/railwayapp/cli:latest
+    environment:
+      name: production
+      url: ${{ vars.PUBLIC_URL }}
+    strategy:
+      fail-fast: true
+      max-parallel: 3
+      matrix:
+        service: [fx-service, pricing-service, booking-service, auth-service, gateway-service, frontend]
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - name: Deploy ${{ matrix.service }}
+        run: |
+          if [ "${{ matrix.service }}" = "frontend" ]; then
+            railway up frontend --path-as-root --ci --service frontend
+          else
+            railway up --ci --service "${{ matrix.service }}"
+          fi
+
+  smoke:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - name: End-to-end smoke test against production
+        run: timeout 900 ./scripts/smoke-test.sh "${{ vars.PUBLIC_URL }}"

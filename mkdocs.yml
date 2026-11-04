@@ -28,6 +28,7 @@ nav:
   - API: api.md
   - Testing & coverage: testing.md
   - Performance: performance.md
+  - Deployment (CI/CD): deployment.md
   - Time management: time-management.md
   - Decisions: decisions.md
   - Changelog: changelog.md
