@@ -39,6 +39,18 @@ describe('/search', () => {
     expect(screen.getByText('$200.00')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Book' })).toBeInTheDocument();
     expect(screen.queryByLabelText('Book for guest #')).not.toBeInTheDocument();
+    expect(sdk.rooms.availability).toHaveBeenCalledWith(expect.objectContaining({ currency: 'USD' }));
+  });
+
+  it('searches in the selected display currency', async () => {
+    const { sdk } = renderWithProviders(<SearchPage />, { user: users.guest, currency: 'ILS' });
+    vi.mocked(sdk.rooms.availability).mockResolvedValue({ ...availability, currency: 'ILS' });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Search' }));
+
+    await waitFor(() =>
+      expect(sdk.rooms.availability).toHaveBeenCalledWith(expect.objectContaining({ currency: 'ILS' })),
+    );
   });
 
   it('staff must choose the guest they book for', async () => {

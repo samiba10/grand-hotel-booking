@@ -12,6 +12,8 @@ export interface UserProfile {
   permissions: string[];
   /** Guest profile owned by this account; absent for staff. */
   guestId?: number;
+  /** ISO-3166 alpha-2, e.g. IL - picks the default display currency. */
+  region?: string;
 }
 
 export interface LoginResponse {
@@ -64,6 +66,24 @@ export interface CreateBooking {
   checkIn: string;
   checkOut: string;
   guestId?: number;
+  currency?: string;
+}
+
+/** System settings (admin-owned). The server is the source of truth for offered currencies. */
+export interface Settings {
+  defaultCurrency: string;
+  supportedCurrencies: string[];
+  regionCurrencies: Record<string, string>;
+  /** What the pricing chain can quote - the admin may offer any subset. */
+  priceableCurrencies: string[];
+  updatedBy: string;
+  updatedAt: string;
+}
+
+export interface UpdateSettings {
+  defaultCurrency: string;
+  supportedCurrencies: string[];
+  regionCurrencies: Record<string, string>;
 }
 
 export interface UpdateBooking {

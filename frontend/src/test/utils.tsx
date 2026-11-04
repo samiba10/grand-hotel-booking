@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 import { AuthContext, type AuthState } from '../auth/AuthContext';
 import { I18nProvider, type Lang } from '../i18n/I18nProvider';
+import { CurrencyContext, type CurrencyState } from '../prefs/CurrencyContext';
 import type { Sdk, UserProfile } from '../sdk';
 
 /** Permissions exactly as the backend returns them (common-defaults.yml). */
@@ -36,19 +37,28 @@ export function fakeSdk(): Sdk {
     bookings: { get: vi.fn(), create: vi.fn(), update: vi.fn(), cancel: vi.fn() },
     guests: { get: vi.fn(), bookings: vi.fn() },
     audit: { search: vi.fn() },
+    settings: { get: vi.fn(), update: vi.fn() },
   } as unknown as Sdk;
 }
 
 export function renderWithProviders(
   ui: ReactElement,
-  options: { user?: UserProfile | null; sdk?: Sdk; lang?: Lang; route?: string } = {},
+  options: { user?: UserProfile | null; sdk?: Sdk; lang?: Lang; route?: string; currency?: string } = {},
 ) {
   const sdk = options.sdk ?? fakeSdk();
   const auth: AuthState = { user: options.user ?? null, ready: true, sdk, login: vi.fn(), logout: vi.fn() };
+  const currency: CurrencyState = {
+    currency: options.currency ?? 'USD',
+    setCurrency: vi.fn(),
+    settings: null,
+    reloadSettings: vi.fn(),
+  };
   const result = render(
     <I18nProvider defaultLang={options.lang ?? 'en'}>
       <MemoryRouter initialEntries={[options.route ?? '/']}>
-        <AuthContext.Provider value={auth}>{ui}</AuthContext.Provider>
+        <AuthContext.Provider value={auth}>
+          <CurrencyContext.Provider value={currency}>{ui}</CurrencyContext.Provider>
+        </AuthContext.Provider>
       </MemoryRouter>
     </I18nProvider>,
   );

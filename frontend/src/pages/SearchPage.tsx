@@ -1,9 +1,10 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { can, Permission } from '../auth/rbac';
 import { useI18n } from '../i18n/I18nProvider';
 import { addDays, hasErrors, isoDate, validateStay, type StayErrors } from '../lib/validation';
+import { useCurrency } from '../prefs/CurrencyContext';
 import type { Availability, RoomOffer, RoomType } from '../sdk';
 import { Alert, Badge, Button, Card, ErrorAlert, Field, Input, PageHeader, Select, Skeleton } from '../ui/components';
 
@@ -13,6 +14,7 @@ const ROOM_TYPES: RoomType[] = ['STANDARD', 'DELUXE', 'SUITE'];
 export function SearchPage() {
   const { sdk, user } = useAuth();
   const { t, money } = useI18n();
+  const { currency } = useCurrency();
   const navigate = useNavigate();
   const today = isoDate(new Date());
 
@@ -31,21 +33,34 @@ export function SearchPage() {
   const [guestIdError, setGuestIdError] = useState(false);
   const [bookingRoom, setBookingRoom] = useState<number | null>(null);
 
-  async function search(e: FormEvent) {
+  // The last valid query; changing the currency re-prices the same search.
+  const [query, setQuery] = useState<{ checkIn: string; checkOut: string; roomType?: RoomType } | null>(null);
+
+  useEffect(() => {
+    if (!query) return;
+    let active = true;
+    setLoading(true);
+    setError(null);
+    sdk.rooms
+      .availability({ ...query, currency })
+      .then((res) => active && setResult(res))
+      .catch((err: unknown) => {
+        if (!active) return;
+        setError(err);
+        setResult(null);
+      })
+      .finally(() => active && setLoading(false));
+    return () => {
+      active = false;
+    };
+  }, [sdk, query, currency]);
+
+  function search(e: FormEvent) {
     e.preventDefault();
     const v = validateStay(checkIn, checkOut, today);
     setErrors(v);
     if (hasErrors(v)) return;
-    setLoading(true);
-    setError(null);
-    try {
-      setResult(await sdk.rooms.availability({ checkIn, checkOut, roomType: roomType || undefined }));
-    } catch (err) {
-      setError(err);
-      setResult(null);
-    } finally {
-      setLoading(false);
-    }
+    setQuery({ checkIn, checkOut, roomType: roomType || undefined });
   }
 
   async function book(room: RoomOffer) {
@@ -63,6 +78,7 @@ export function SearchPage() {
         checkIn: result.checkIn,
         checkOut: result.checkOut,
         guestId: booksForOthers ? Number(guestId) : undefined,
+        currency: result.currency,
       });
       navigate(`/booking/${booking.id}`, { state: { justCreated: true } });
     } catch (err) {

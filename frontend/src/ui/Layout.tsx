@@ -3,6 +3,7 @@ import { useAuth } from '../auth/AuthContext';
 import { Can } from '../auth/Can';
 import { Permission } from '../auth/rbac';
 import { useI18n } from '../i18n/I18nProvider';
+import { CurrencySelect } from '../prefs/CurrencyContext';
 import { Badge, Button } from './components';
 
 const link = ({ isActive }: { isActive: boolean }) =>
@@ -50,6 +51,11 @@ export function Layout() {
                 {t('nav.audit')}
               </NavLink>
             </Can>
+            <Can permission={Permission.settingsWrite}>
+              <NavLink to="/admin/settings" className={link}>
+                {t('nav.settings')}
+              </NavLink>
+            </Can>
           </nav>
           <div className="flex items-center gap-2">
             {user && (
@@ -62,6 +68,7 @@ export function Layout() {
                 ))}
               </span>
             )}
+            <CurrencySelect />
             <LanguageToggle />
             <Button variant="ghost" className="text-white hover:bg-white/10" onClick={logout}>
               {t('nav.logout')}
