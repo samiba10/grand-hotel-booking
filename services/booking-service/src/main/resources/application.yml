@@ -1,0 +1,16 @@
+server:
+  port: ${SERVER_PORT:8082}
+
+spring:
+  application:
+    name: booking-service
+
+app:
+  booking:
+    hotel-id: 1
+    currency: USD          # charged currency (assignment: USD pricing)
+  clients:
+    pricing:
+      url: ${PRICING_URL:http://localhost:8083}
+      timeout: PT3S
+# No public paths: every endpoint requires a valid JWT.
