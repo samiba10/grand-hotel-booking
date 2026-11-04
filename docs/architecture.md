@@ -141,3 +141,23 @@ guest profile.
 | Container build | root `Dockerfile` with `SERVICE` build arg |
 | Edge policy (public paths, route permissions, transaction types) | gateway `application.yml` |
 
+## Frontend structure
+
+```mermaid
+flowchart TB
+  P[pages: Search, Booking, Guest, Audit, Login] --> UI[ui/components<br/>RTL-safe style components]
+  P --> A[auth: AuthContext, rbac, Can, guards]
+  P --> I[i18n: EN / HE, dir, money, dates]
+  A --> SDK[sdk: typed endpoints]
+  P --> SDK
+  SDK --> H[http: token, X-Session-Id ping-pong,<br/>ApiError with transaction id]
+  H -->|/api| GW[gateway]
+```
+
+| Folder | Responsibility |
+|---|---|
+| `src/sdk` | the API handler: the only code that calls `fetch` |
+| `src/auth` | session, RBAC from backend permissions, `<Can>`, route guards |
+| `src/i18n` | dictionaries (Hebrew type-checked against English), `dir` on `<html>`, `Intl` money/dates |
+| `src/ui` | style components (Button, Field, Alert, ...) using only logical Tailwind utilities |
+| `src/pages` | `/search`, `/booking/:id`, `/guest/:id`, `/admin/audit`, `/login` |
