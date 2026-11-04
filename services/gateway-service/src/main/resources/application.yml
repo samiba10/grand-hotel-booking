@@ -1,0 +1,72 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      server:
+        webflux:
+          # Only public APIs are routed. pricing-service and fx-service are INTERNAL (not exposed).
+          routes:
+            - id: auth-service
+              uri: ${AUTH_URL:http://localhost:8081}
+              predicates:
+                - Path=/api/auth/**
+            - id: booking-service
+              uri: ${BOOKING_URL:http://localhost:8082}
+              predicates:
+                - Path=/api/rooms/**,/api/bookings/**,/api/guests/**,/api/audit/**
+          default-filters:
+            - SecureHeaders
+            - name: RequestSize
+              args:
+                maxSize: 1MB
+            - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
+                allowed-methods: [GET, POST, PUT, DELETE, OPTIONS]
+                allowed-headers: [Authorization, Content-Type, X-Session-Id]
+                exposed-headers: [X-Transaction-Id, X-Session-Id, X-RateLimit-Remaining, Retry-After]
+                allow-credentials: false
+                max-age: 3600
+          httpclient:
+            connect-timeout: 2000
+            response-timeout: 10s
+
+app:
+  gateway:
+    public-paths:
+      - /api/auth/login
+      - /actuator/health/**
+    # Coarse AuthZ: the caller needs at least one of these permissions to reach the route.
+    route-permissions:
+      - pattern: /api/audit/**
+        any-of: [audit:read]
+      - pattern: /api/rooms/**
+        any-of: [room:read]
+      - pattern: /api/guests/**
+        any-of: [guest:read:own, guest:read:any, booking:read:own, booking:read:any]
+      - pattern: /api/bookings/**
+        any-of: [booking:read:own, booking:read:any, booking:create:own, booking:create:any]
+    # Every request gets a transaction id prefixed with its type. Unknown -> HTTP_<METHOD>.
+    transaction-types:
+      - { method: POST,   pattern: /api/auth/login,          type: AUTH_LOGIN }
+      - { method: GET,    pattern: /api/auth/me,             type: AUTH_ME }
+      - { method: GET,    pattern: /api/rooms/availability,  type: ROOM_AVAILABILITY }
+      - { method: POST,   pattern: /api/bookings,            type: BOOKING_CREATE }
+      - { method: GET,    pattern: /api/bookings/*,          type: BOOKING_READ }
+      - { method: PUT,    pattern: /api/bookings/*,          type: BOOKING_UPDATE }
+      - { method: DELETE, pattern: /api/bookings/*,          type: BOOKING_CANCEL }
+      - { method: GET,    pattern: /api/guests/*/bookings,   type: GUEST_BOOKINGS }
+      - { method: GET,    pattern: /api/guests/*,            type: GUEST_READ }
+      - { method: GET,    pattern: /api/audit,               type: AUDIT_READ }
+  rate-limit:
+    enabled: ${RATE_LIMIT_ENABLED:true}
+    capacity: ${RATE_LIMIT_CAPACITY:60}          # burst per client
+    refill-per-second: ${RATE_LIMIT_REFILL:20}   # sustained requests/second per client
+    max-tracked-clients: 100000
+    trust-forwarded-for: ${RATE_LIMIT_TRUST_XFF:false}

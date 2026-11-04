@@ -9,3 +9,4 @@ Documentation is updated in the same commit as the code it describes.
 | 4 | fx-service: rates as BIGINT micros with history, pluggable provider (mock random walk), no rate constant in code | - |
 | 5 | pricing-service: per-night price = base x season x occupancy, FX conversion, stale fallback / 503 | pricing & FX |
 | 6 | booking-service: 6 required endpoints, rooms/guests/bookings/AuditLog schema, own/any AuthZ, room row lock, request + business audit | API |
+| 7 | gateway: typed transaction id per request, session ping-pong, rate limit, AuthN, route-level AuthZ, routing (pricing/fx internal) | architecture (components, request sequence, ERD) |
