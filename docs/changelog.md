@@ -15,3 +15,4 @@ Documentation is updated in the same commit as the code it describes.
 | 10 | Frontend RBAC from backend permissions (<Can>, guards, canOn own/any), EN/HE i18n with dir=rtl, RTL-safe style components | security (FE RBAC) |
 | 11 | Pages: /search, /booking/:id, /guest/:id, /admin/audit, /login - responsive, validation, loading states | architecture (frontend structure) |
 | 12 | Docker: one Dockerfile for all Java services, nginx frontend, compose with Postgres + healthchecks, smoke test | getting started |
+| 13 | k6: availability (p95 79 ms, 0% errors) and booking contention (exactly 10/500 created, 0 x 5xx); Makefile | performance (results + analysis) |
