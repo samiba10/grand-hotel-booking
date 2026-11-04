@@ -1,0 +1,12 @@
+server:
+  port: ${SERVER_PORT:8084}
+
+spring:
+  application:
+    name: fx-service
+
+app:
+  fx:
+    pairs: [ILS/USD]
+    refresh-interval: ${FX_REFRESH_INTERVAL:PT30S}
+    max-step-basis-points: 30
