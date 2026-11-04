@@ -11,3 +11,4 @@ Documentation is updated in the same commit as the code it describes.
 | 6 | booking-service: 6 required endpoints, rooms/guests/bookings/AuditLog schema, own/any AuthZ, room row lock, request + business audit | API |
 | 7 | gateway: typed transaction id per request, session ping-pong, rate limit, AuthN, route-level AuthZ, routing (pricing/fx internal) | architecture (components, request sequence, ERD) |
 | 8 | coverage-report: JaCoCo aggregate across modules (common-lib is exercised by service tests) | testing (coverage table) |
+| 9 | Frontend scaffold (Vite, React, TS, Tailwind, Vitest) + SDK: single API handler, session ping-pong, ApiError with transaction id | - |
