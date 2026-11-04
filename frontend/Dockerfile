@@ -8,7 +8,9 @@ RUN npm run build
 
 # Unprivileged nginx: non-root, port 8080
 FROM nginxinc/nginx-unprivileged:stable-alpine
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Config is a template: the same image runs in compose and on Railway (API_UPSTREAM).
+COPY nginx/default.conf.template /etc/nginx/templates/default.conf.template
+ENV API_UPSTREAM=http://gateway-service:8080
 COPY --from=build /app/dist /usr/share/nginx/html
 EXPOSE 8080
 HEALTHCHECK --interval=10s --timeout=3s --start-period=10s --retries=5 \

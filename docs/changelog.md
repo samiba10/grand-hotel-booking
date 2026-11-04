@@ -22,3 +22,4 @@ Documentation is updated in the same commit as the code it describes.
 | 17 | System settings (ADMIN): offered currencies, default, region -> currency; per-request currency; user region on /me | API, security matrix, pricing & FX (currency selection) |
 | 18 | Frontend: currency dropdown, region default, /admin/settings | security (FE RBAC) |
 | 19 | Docs: deliberate deviations (EF -> JPA, static -> dynamic pricing, TotalAmount), assignment schema mapping | README, architecture, index |
+| 21 | CD to Railway: deploy after green CI on main, setup script, nginx template, smoke test vs production | deployment |
