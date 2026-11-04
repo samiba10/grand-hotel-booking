@@ -1,5 +1,7 @@
 # Grand Hotel Booking Platform
 
+[![CI](https://github.com/samiba10/grand-hotel-booking/actions/workflows/ci.yml/badge.svg)](https://github.com/samiba10/grand-hotel-booking/actions/workflows/ci.yml)
+
 Hotel booking platform built as microservices: **Spring Boot 4 + Spring Cloud Gateway** backend,
 **React + TypeScript + Tailwind** frontend (English / Hebrew RTL), PostgreSQL, Docker.
 
