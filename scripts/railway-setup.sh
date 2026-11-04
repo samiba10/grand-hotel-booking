@@ -36,7 +36,8 @@ set_vars gateway-service "${java[@]}" "SERVICE=gateway-service" \
   'AUTH_URL=http://${{auth-service.RAILWAY_PRIVATE_DOMAIN}}:8080' \
   'BOOKING_URL=http://${{booking-service.RAILWAY_PRIVATE_DOMAIN}}:8080' \
   'CORS_ALLOWED_ORIGINS=https://${{frontend.RAILWAY_PUBLIC_DOMAIN}}' \
-  'RATE_LIMIT_TRUST_XFF=true'
+  'RATE_LIMIT_TRUST_XFF=true' \
+  'SERVER_ADDRESS=::'
 
 set_vars frontend "PORT=8080" \
   'API_UPSTREAM=http://${{gateway-service.RAILWAY_PRIVATE_DOMAIN}}:8080'
