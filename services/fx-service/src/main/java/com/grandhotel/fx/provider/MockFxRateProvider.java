@@ -1,6 +1,7 @@
 package com.grandhotel.fx.provider;
 
 import com.grandhotel.fx.FxProperties;
+import java.util.SplittableRandom;
 import java.util.random.RandomGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,7 @@ public class MockFxRateProvider implements FxRateProvider {
 
   @Autowired
   public MockFxRateProvider(FxProperties props) {
-    this(props.maxStepBasisPoints(), RandomGenerator.getDefault());
+    this(props.maxStepBasisPoints(), new SplittableRandom());
   }
 
   MockFxRateProvider(int maxStepBasisPoints, RandomGenerator random) {
