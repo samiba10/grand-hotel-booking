@@ -1,0 +1,33 @@
+# Only what is specific to this service. Shared settings come from common-lib/common-defaults.yml.
+server:
+  port: ${SERVER_PORT:8081}
+
+spring:
+  application:
+    name: auth-service
+
+app:
+  security:
+    public-paths:
+      - /api/auth/login
+  # DEV/DEMO ONLY passwords - override with env vars in any shared environment.
+  demo:
+    users:
+      - username: guest1
+        password: ${DEMO_GUEST_PASSWORD:Guest123!}
+        display-name: Dana Levi
+        roles: [GUEST]
+        guest-id: 1
+      - username: guest2
+        password: ${DEMO_GUEST_PASSWORD:Guest123!}
+        display-name: John Smith
+        roles: [GUEST]
+        guest-id: 2
+      - username: staff
+        password: ${DEMO_STAFF_PASSWORD:Staff123!}
+        display-name: Front Desk
+        roles: [STAFF]
+      - username: admin
+        password: ${DEMO_ADMIN_PASSWORD:Admin123!}
+        display-name: Hotel Admin
+        roles: [ADMIN]
