@@ -16,12 +16,12 @@ COPY services/pricing-service/pom.xml services/pricing-service/
 COPY services/booking-service/pom.xml services/booking-service/
 COPY services/gateway-service/pom.xml services/gateway-service/
 COPY coverage-report/pom.xml coverage-report/
-RUN --mount=type=cache,target=/root/.m2 \
+RUN \
     mvn -B -q -pl services/${SERVICE} -am dependency:go-offline -DskipTests || true
 # 2) Sources
 COPY libs libs
 COPY services services
-RUN --mount=type=cache,target=/root/.m2 \
+RUN \
     mvn -B -q -pl services/${SERVICE} -am package -DskipTests \
  && cp services/${SERVICE}/target/${SERVICE}-*.jar /app.jar \
  && java -Djarmode=tools -jar /app.jar extract --layers --launcher --destination /layers
