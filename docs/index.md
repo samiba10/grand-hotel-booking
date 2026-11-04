@@ -21,8 +21,9 @@ count. Each design choice is explained where it lives and summarised in [Decisio
 
 | Requirement | Status |
 |---|---|
+| Static $100/night (assumption) | ✅ as the base price; dynamic on top (Pricing bonus) - see README notes |
 | RESTful API, proper status codes | ✅ 200/201/204/400/401/403/404/409/429/503 |
-| ORM + PostgreSQL | ✅ JPA/Hibernate (Java's Entity Framework), Flyway migrations |
+| ORM + PostgreSQL | ✅ JPA/Hibernate instead of Entity Framework (ADR 1), Flyway migrations |
 | Validation + error handling | ✅ Bean Validation + one `ApiError` contract (with transaction id) |
 | Authentication middleware | ✅ JWT at the gateway **and** in every service |
 | 6 required endpoints | ✅ see [API](api.md) |

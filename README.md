@@ -59,6 +59,17 @@ mvn verify                  # all tests + coverage reports
 Start `fx-service`, `pricing-service`, `booking-service`, `auth-service`, `gateway-service` with
 `mvn -pl services/<name> spring-boot:run` (H2 in memory, no database needed).
 
+## Assignment notes (deliberate deviations)
+
+| Assignment says | This project | Why |
+|---|---|---|
+| Entity Framework | **JPA / Hibernate + Flyway** (Java's ORM + migrations) | Same concepts on the Java/Spring stack ([ADR 1](docs/decisions.md)) |
+| Static pricing, $100/night | **Base price = $100 equivalent** (370.00 ILS), then season x occupancy x live FX | Implements the *Pricing Microservice* bonus; set no seasons / one occupancy tier for static pricing |
+| Bookings.TotalAmount | `total_amount_minor` (BIGINT) + `currency` + `fx_rate_used` | Integer money, no floating point ([Pricing & FX](docs/pricing-and-fx.md)) |
+| Single microservice (Booking) | Booking + auth, pricing, fx behind a gateway | Gateway, pricing and RBAC bonuses; booking-service alone covers the core |
+
+Full schema mapping: [Architecture - assignment mapping](docs/architecture.md#assignment-schema-mapping).
+
 ## Documentation
 
 Everything else is in [`docs/`](docs/index.md) (served with `make docs`): architecture diagrams,

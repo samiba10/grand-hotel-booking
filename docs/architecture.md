@@ -128,6 +128,16 @@ erDiagram
 table: the assignment asks for hardcoded demo users; `guestId` in the JWT links an account to its
 guest profile.
 
+## Assignment schema mapping
+
+| Assignment | Table / column | Notes |
+|---|---|---|
+| Rooms (Id, RoomNumber, RoomType, Status) | `rooms` (id, room_number, room_type, status) | + `hotel_id` (multi-property ready); type STANDARD/DELUXE/SUITE; status ACTIVE/MAINTENANCE |
+| Guests (Id, FirstName, LastName, Email, Phone) | `guests` (id, first_name, last_name, email, phone) | email unique |
+| Bookings (Id, GuestId, RoomId, CheckIn, CheckOut, Status, TotalAmount) | `bookings` (id, guest_id, room_id, check_in, check_out, status, **total_amount_minor**, currency, fx_rate_micros) | TotalAmount as BIGINT minor units + currency; status CONFIRMED/CANCELLED (DELETE = soft cancel) |
+| AuditLog (Id, Action, EntityType, EntityId, UserId, Timestamp) | `audit_log` (id, action, entity_type, entity_id, user_id, timestamp) | + transaction_id, transaction_type, session_id, outcome, details |
+| - | `hotels`, `system_settings`, `fx_rates` (fxdb) | single hotel id 1 "Grand Hotel"; admin settings; FX history |
+
 ## How cross-cutting code is shared
 
 | Concern | Written once in |
