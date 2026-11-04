@@ -23,3 +23,4 @@ Documentation is updated in the same commit as the code it describes.
 | 18 | Frontend: currency dropdown, region default, /admin/settings | security (FE RBAC) |
 | 19 | Docs: deliberate deviations (EF -> JPA, static -> dynamic pricing, TotalAmount), assignment schema mapping | README, architecture, index |
 | 21 | CD to Railway: deploy after green CI on main, setup script, nginx template, smoke test vs production | deployment |
+| 20 | Frontend coverage in testing.md; mobile screenshot | testing, README |

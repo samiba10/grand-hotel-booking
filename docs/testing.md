@@ -33,6 +33,7 @@ passes in any order.
 | gateway-service | 95% (178/187) |
 | booking-service | 87% (310/355) |
 | pricing-service | 70% (78/111) -> FX client resilience tests added |
+| frontend | 45% lines, 76% branches. Pure logic is tested directly (`sdk/http`, `auth/rbac`, `lib/validation`, `prefs/currency`, plus `/search` and `<Can>`); React providers (`AuthContext`, `CurrencyContext`, `useAsync`) and the booking / guest / audit / settings pages (pages folder 20%) are the next target |
 | common-lib | 35% (98/277) own unit tests only - see below |
 
 `common-lib` is mostly exercised by the services' integration tests (security chain, request
