@@ -14,3 +14,4 @@ Documentation is updated in the same commit as the code it describes.
 | 9 | Frontend scaffold (Vite, React, TS, Tailwind, Vitest) + SDK: single API handler, session ping-pong, ApiError with transaction id | - |
 | 10 | Frontend RBAC from backend permissions (<Can>, guards, canOn own/any), EN/HE i18n with dir=rtl, RTL-safe style components | security (FE RBAC) |
 | 11 | Pages: /search, /booking/:id, /guest/:id, /admin/audit, /login - responsive, validation, loading states | architecture (frontend structure) |
+| 12 | Docker: one Dockerfile for all Java services, nginx frontend, compose with Postgres + healthchecks, smoke test | getting started |

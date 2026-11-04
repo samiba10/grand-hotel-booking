@@ -1,0 +1,94 @@
+# Full stack:  docker compose up --build   ->  UI http://localhost:3000 , API http://localhost:8080
+# Every Java service: same Dockerfile, port 8080 inside its container, shared env block.
+
+x-java-service: &java-service
+  build: &java-build
+    context: .
+    dockerfile: Dockerfile
+  restart: unless-stopped
+  environment: &java-env
+    JWT_SECRET: ${JWT_SECRET:-local-compose-secret-change-me-0123456789}
+    DB_USERNAME: hotel
+    DB_PASSWORD: ${POSTGRES_PASSWORD:-hotel}
+  security_opt: ["no-new-privileges:true"]
+  read_only: true
+  tmpfs: ["/tmp"]
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: hotel
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hotel}
+      POSTGRES_DB: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hotel -d postgres"]
+      interval: 5s
+      retries: 10
+
+  auth-service:
+    <<: *java-service
+    build: { <<: *java-build, args: { SERVICE: auth-service } }
+    ports: ["8081:8080"]   # Swagger: http://localhost:8081/swagger-ui.html
+
+  fx-service:
+    <<: *java-service
+    build: { <<: *java-build, args: { SERVICE: fx-service } }
+    environment:
+      <<: *java-env
+      DB_URL: jdbc:postgresql://postgres:5432/fxdb
+      FX_REFRESH_INTERVAL: PT30S
+    depends_on:
+      postgres: { condition: service_healthy }
+    ports: ["8084:8080"]
+
+  pricing-service:
+    <<: *java-service
+    build: { <<: *java-build, args: { SERVICE: pricing-service } }
+    environment:
+      <<: *java-env
+      FX_URL: http://fx-service:8080
+    depends_on:
+      fx-service: { condition: service_healthy }
+    ports: ["8083:8080"]
+
+  booking-service:
+    <<: *java-service
+    build: { <<: *java-build, args: { SERVICE: booking-service } }
+    environment:
+      <<: *java-env
+      DB_URL: jdbc:postgresql://postgres:5432/bookingdb
+      PRICING_URL: http://pricing-service:8080
+    depends_on:
+      postgres: { condition: service_healthy }
+      pricing-service: { condition: service_healthy }
+    ports: ["8082:8080"]
+
+  gateway-service:
+    <<: *java-service
+    build: { <<: *java-build, args: { SERVICE: gateway-service } }
+    environment:
+      <<: *java-env
+      AUTH_URL: http://auth-service:8080
+      BOOKING_URL: http://booking-service:8080
+      CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173
+      RATE_LIMIT_ENABLED: ${RATE_LIMIT_ENABLED:-true}
+      RATE_LIMIT_TRUST_XFF: "true"   # only nginx (frontend) and k6 reach the gateway here
+    depends_on:
+      auth-service: { condition: service_healthy }
+      booking-service: { condition: service_healthy }
+    ports: ["8080:8080"]
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      gateway-service: { condition: service_healthy }
+    ports: ["3000:8080"]
+
+volumes:
+  pgdata:
