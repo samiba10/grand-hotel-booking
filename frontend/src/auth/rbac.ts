@@ -22,6 +22,7 @@ export function canOn(user: UserProfile | null, action: string, ownerGuestId?: n
 export const Permission = {
   roomRead: 'room:read',
   auditRead: 'audit:read',
+  settingsWrite: 'settings:write',
   bookingCreateAny: 'booking:create:any',
   bookingCreateOwn: 'booking:create:own',
   booking: { read: 'booking:read', update: 'booking:update', cancel: 'booking:cancel' },

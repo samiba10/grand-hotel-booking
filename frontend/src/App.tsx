@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { RequireAuth, RequirePermission } from './auth/guards';
 import { Permission } from './auth/rbac';
+import { AdminSettingsPage } from './pages/AdminSettingsPage';
 import { AuditPage } from './pages/AuditPage';
 import { BookingPage } from './pages/BookingPage';
 import { GuestPage } from './pages/GuestPage';
@@ -36,6 +37,14 @@ export function App() {
           element={
             <RequirePermission anyOf={[Permission.auditRead]}>
               <AuditPage />
+            </RequirePermission>
+          }
+        />
+        <Route
+          path="/admin/settings"
+          element={
+            <RequirePermission anyOf={[Permission.settingsWrite]}>
+              <AdminSettingsPage />
             </RequirePermission>
           }
         />

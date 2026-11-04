@@ -87,3 +87,5 @@ flowchart LR
 - Hiding is UX, not security: if a user forces a call (e.g. opens `/guest/2` as guest 1), the
   backend answers 403 and `ErrorAlert` shows its explanation and the transaction id.
 - Staff (`booking:create:any`) get a "book for guest #" field; guests always book for themselves.
+- Admins (`settings:write`) get the Settings page; offered currencies there drive the header
+  currency dropdown for everyone. The server re-validates every currency it receives.

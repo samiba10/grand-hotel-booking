@@ -7,7 +7,9 @@ import type {
   Guest,
   LoginResponse,
   RoomType,
+  Settings,
   UpdateBooking,
+  UpdateSettings,
   UserProfile,
 } from './types';
 
@@ -20,11 +22,12 @@ export function createSdk(http: Http) {
       me: () => http.get<UserProfile>('/api/auth/me'),
     },
     rooms: {
-      availability: (q: { checkIn: string; checkOut: string; roomType?: RoomType }) =>
+      availability: (q: { checkIn: string; checkOut: string; roomType?: RoomType; currency?: string }) =>
         http.get<Availability>('/api/rooms/availability', {
           checkin: q.checkIn,
           checkout: q.checkOut,
           roomType: q.roomType,
+          currency: q.currency,
         }),
     },
     bookings: {
@@ -36,6 +39,10 @@ export function createSdk(http: Http) {
     guests: {
       get: (id: number) => http.get<Guest>(`/api/guests/${id}`),
       bookings: (id: number) => http.get<Booking[]>(`/api/guests/${id}/bookings`),
+    },
+    settings: {
+      get: () => http.get<Settings>('/api/settings'),
+      update: (body: UpdateSettings) => http.put<Settings>('/api/settings', body),
     },
     audit: {
       search: (q: { transactionId?: string; sessionId?: string; limit?: number }) =>
