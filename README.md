@@ -5,6 +5,15 @@
 Hotel booking platform built as microservices: **Spring Boot 4 + Spring Cloud Gateway** backend,
 **React + TypeScript + Tailwind** frontend (English / Hebrew RTL), PostgreSQL, Docker.
 
+| Search | Booking | Hebrew (RTL) |
+|---|---|---|
+| ![Search](docs/img/search.png) | ![Booking](docs/img/booking.png) | ![RTL](docs/img/rtl.png) |
+
+**Highlights:** gateway with AuthN + route-level AuthZ, permission-based RBAC in backend AND
+frontend, transaction id + session id on every request and in the audit log, dynamic pricing with
+a mocked FX service (integer money end to end), no double booking under 500 parallel requests,
+99+ backend tests, k6 benchmarks, Docker, CI.
+
 ## Run it (Docker - the supported way)
 
 Prerequisites: Docker Desktop. Nothing else.
