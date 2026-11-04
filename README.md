@@ -20,6 +20,9 @@ a mocked FX service (integer money end to end), no double booking under 500 para
 
 ## Demo
 
+**Live demo:** https://frontend-production-8084a.up.railway.app (demo users below) - deployed by the CD pipeline on every green merge to `main`.
+
+
 https://github.com/user-attachments/assets/PASTE-HERE
 
 **Docs site:** https://samiba10.github.io/grand-hotel-booking/
