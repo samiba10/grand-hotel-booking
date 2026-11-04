@@ -18,3 +18,4 @@ Documentation is updated in the same commit as the code it describes.
 | 13 | k6: availability (p95 79 ms, 0% errors) and booking contention (exactly 10/500 created, 0 x 5xx); Makefile | performance (results + analysis) |
 | 14 | CI: GitHub Actions - backend verify + coverage artifact, frontend lint/test/build, docker compose build | README badge |
 | 15 | README screenshots + highlights; integration bugs table | README, time management |
+| 15.1 | README gallery: search, change dates, cancel, 403 feedback, Hebrew RTL | README |
