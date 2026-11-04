@@ -11,6 +11,7 @@ public final class Permissions {
   public static final String PRICING_QUOTE = "pricing:quote";
   public static final String AUDIT_READ = "audit:read";
   public static final String FX_READ = "fx:read";
+  public static final String SETTINGS_WRITE = "settings:write";
 
   /** Scoped actions: combine with {@link AccessGuard#require}. */
   public static final String BOOKING_CREATE = "booking:create";

@@ -17,7 +17,7 @@ spring:
             - id: booking-service
               uri: ${BOOKING_URL:http://localhost:8082}
               predicates:
-                - Path=/api/rooms/**,/api/bookings/**,/api/guests/**,/api/audit/**
+                - Path=/api/rooms/**,/api/bookings/**,/api/guests/**,/api/audit/**,/api/settings/**
           default-filters:
             - SecureHeaders
             - name: RequestSize
@@ -64,6 +64,8 @@ app:
       - { method: GET,    pattern: /api/guests/*/bookings,   type: GUEST_BOOKINGS }
       - { method: GET,    pattern: /api/guests/*,            type: GUEST_READ }
       - { method: GET,    pattern: /api/audit,               type: AUDIT_READ }
+      - { method: GET,    pattern: /api/settings,            type: SETTINGS_READ }
+      - { method: PUT,    pattern: /api/settings,            type: SETTINGS_UPDATE }
   rate-limit:
     enabled: ${RATE_LIMIT_ENABLED:true}
     capacity: ${RATE_LIMIT_CAPACITY:60}          # burst per client

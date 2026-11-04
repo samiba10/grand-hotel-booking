@@ -50,18 +50,23 @@ public class AuthService {
 
   /** The FE builds its RBAC layer from this: permissions come from the BE, never guessed. */
   public UserProfile me(AuthenticatedUser principal) {
-    String displayName =
-        users.find(principal.username()).map(UserRecord::displayName).orElse(principal.username());
+    var record = users.find(principal.username());
     return new UserProfile(
         principal.username(),
-        displayName,
+        record.map(UserRecord::displayName).orElse(principal.username()),
         principal.roles(),
         principal.permissions(),
-        principal.guestId());
+        principal.guestId(),
+        record.map(UserRecord::region).orElse(null));
   }
 
   private UserProfile profile(UserRecord u) {
     return new UserProfile(
-        u.username(), u.displayName(), u.roles(), permissions.permissionsFor(u.roles()), u.guestId());
+        u.username(),
+        u.displayName(),
+        u.roles(),
+        permissions.permissionsFor(u.roles()),
+        u.guestId(),
+        u.region());
   }
 }

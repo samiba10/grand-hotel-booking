@@ -11,9 +11,14 @@ public final class BookingDtos {
 
   /**
    * @param guestId optional for guests (defaults to their own profile), required for staff
+   * @param currency optional; must be offered by system settings, default currency otherwise
    */
   public record CreateBookingRequest(
-      @NotNull Long roomId, @NotNull LocalDate checkIn, @NotNull LocalDate checkOut, Long guestId) {}
+      @NotNull Long roomId,
+      @NotNull LocalDate checkIn,
+      @NotNull LocalDate checkOut,
+      Long guestId,
+      String currency) {}
 
   public record UpdateBookingRequest(
       @NotNull Long roomId, @NotNull LocalDate checkIn, @NotNull LocalDate checkOut) {}

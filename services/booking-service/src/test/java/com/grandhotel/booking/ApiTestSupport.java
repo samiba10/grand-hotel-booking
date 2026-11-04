@@ -59,9 +59,10 @@ public abstract class ApiTestSupport {
             inv -> {
               StayDates dates = inv.getArgument(0);
               Set<RoomType> types = inv.getArgument(2);
+              String currency = inv.getArgument(3);
               var totals = new EnumMap<RoomType, Long>(RoomType.class);
               types.forEach(t -> totals.put(t, NIGHTLY * dates.nights()));
-              return new PricingQuote("USD", totals, FX, Instant.now(), false);
+              return new PricingQuote(currency, totals, FX, Instant.now(), false);
             });
   }
 

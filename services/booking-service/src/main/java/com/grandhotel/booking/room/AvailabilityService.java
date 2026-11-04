@@ -5,6 +5,7 @@ import com.grandhotel.booking.booking.BookingRepository;
 import com.grandhotel.booking.booking.StayDates;
 import com.grandhotel.booking.pricing.PricingClient;
 import com.grandhotel.booking.pricing.PricingQuote;
+import com.grandhotel.booking.settings.SettingsService;
 import com.grandhotel.common.exception.NotFoundException;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ public class AvailabilityService {
   private final HotelRepository hotels;
   private final BookingRepository bookings;
   private final PricingClient pricing;
+  private final SettingsService settings;
   private final BookingProperties props;
 
   public AvailabilityService(
@@ -30,16 +32,19 @@ public class AvailabilityService {
       HotelRepository hotels,
       BookingRepository bookings,
       PricingClient pricing,
+      SettingsService settings,
       BookingProperties props) {
     this.rooms = rooms;
     this.hotels = hotels;
     this.bookings = bookings;
     this.pricing = pricing;
+    this.settings = settings;
     this.props = props;
   }
 
   @Transactional(readOnly = true)
-  public AvailabilityResponse search(StayDates dates, RoomType typeFilter) {
+  public AvailabilityResponse search(StayDates dates, RoomType typeFilter, String requestedCurrency) {
+    String currency = settings.resolveCurrency(requestedCurrency);
     Hotel hotel =
         hotels
             .findById(props.hotelId())
@@ -55,13 +60,13 @@ public class AvailabilityService {
     if (free.isEmpty()) {
       return new AvailabilityResponse(
           hotel.getId(), hotel.getName(), dates.checkIn(), dates.checkOut(), dates.nights(),
-          occupancy, props.currency(), null, List.of());
+          occupancy, currency, null, List.of());
     }
     Set<RoomType> types =
         free.stream()
             .map(Room::getRoomType)
             .collect(Collectors.toCollection(() -> EnumSet.noneOf(RoomType.class)));
-    PricingQuote quote = pricing.quote(dates, occupancy, types, props.currency());
+    PricingQuote quote = pricing.quote(dates, occupancy, types, currency);
 
     List<RoomOffer> offers =
         free.stream()

@@ -28,11 +28,12 @@ public class RoomController {
 
   @GetMapping("/availability")
   @PreAuthorize("hasAuthority('room:read')")
-  @Operation(summary = "Free rooms for the stay, with dynamic price in USD")
+  @Operation(summary = "Free rooms for the stay, priced in the requested (or default) currency")
   public AvailabilityResponse availability(
       @RequestParam("checkin") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkIn,
       @RequestParam("checkout") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOut,
-      @RequestParam(required = false) RoomType roomType) {
-    return availability.search(StayDates.of(checkIn, checkOut, clock), roomType);
+      @RequestParam(required = false) RoomType roomType,
+      @RequestParam(required = false) String currency) {
+    return availability.search(StayDates.of(checkIn, checkOut, clock), roomType, currency);
   }
 }

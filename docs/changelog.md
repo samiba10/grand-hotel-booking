@@ -19,4 +19,5 @@ Documentation is updated in the same commit as the code it describes.
 | 14 | CI: GitHub Actions - backend verify + coverage artifact, frontend lint/test/build, docker compose build | README badge |
 | 15 | README screenshots + highlights; integration bugs table | README, time management |
 | 15.1 | README gallery: search, change dates, cancel, 403 feedback, Hebrew RTL | README |
+| 17 | System settings (ADMIN): offered currencies, default, region -> currency; per-request currency; user region on /me | API, security matrix, pricing & FX (currency selection) |
 | 18 | Frontend: currency dropdown, region default, /admin/settings | security (FE RBAC) |
