@@ -18,6 +18,12 @@ frontend, transaction id + session id on every request and in the audit log, dyn
 a mocked FX service (integer money end to end), no double booking under 500 parallel requests,
 99+ backend tests, k6 benchmarks, Docker, CI.
 
+## Demo
+
+https://github.com/user-attachments/assets/PASTE-HERE
+
+**Docs site:** https://samiba10.github.io/grand-hotel-booking/
+
 ## Run it (Docker - the supported way)
 
 Prerequisites: Docker Desktop. Nothing else.
